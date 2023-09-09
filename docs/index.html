@@ -8,6 +8,8 @@
     </head>
     <body>
         <div id="app">
+            Moves: {{stats.moves}}<br>
+            Time: {{time}}<br>
             <table class="grid">
                 <tr v-for="(row, r) in fifteenBoard">
                     <template v-for="(cell, c) in row">
@@ -18,10 +20,6 @@
                     </template>
                 </tr>
             </table>
-            <button @click="resetBoard">
-                Reset
-            </button>
-            
             <button @click="scramble">
                 Scramble
             </button>

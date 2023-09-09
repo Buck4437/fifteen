@@ -8,9 +8,39 @@ const defaultState = [
     [13, 14, 15, EMPTY_SPACE]
 ];
 
-var gridSize = 4;
+const gridSize = 4;
+
 var fifteenBoard = defaultState.map(x => [...x]);
 var fifteenBoardEmptyPosition = [3, 3];
+const stats = {
+    moves: 0,
+    tickStart: null,
+    tickEnd: null
+};
+
+function checkWin() {
+    if (stats.tickEnd !== null) {
+        return;
+    }
+    
+    const a = defaultState.flat();
+    const b = fifteenBoard.flat();
+    if (a.every((val, idx) => val === b[idx])) {
+        stats.tickEnd = Date.now();
+    }
+}
+
+function updateStatsAfterMove() {
+    if (stats.tickStart == null && stats.tickEnd == null) {
+        stats.tickStart = Date.now();
+    }
+
+    if (stats.tickEnd == null) {
+        stats.moves++;
+    }
+
+    checkWin();
+};
 
 function moveTile(r, c) {
     let [rEmpty, cEmpty] = fifteenBoardEmptyPosition;
@@ -22,12 +52,14 @@ function moveTile(r, c) {
         const cNew = c + neighbour[1];
 
         if ((rNew == rEmpty) && (cNew == cEmpty)) {
-            console.log("yes");
             // Vue is an amazing tool
             fifteenBoard[rNew].splice(cNew, 1, fifteenBoard[r][c]);
             fifteenBoard[r].splice(c, 1, EMPTY_SPACE);
             fifteenBoardEmptyPosition = [r, c];
-            break;
+
+            updateStatsAfterMove();
+
+            return;
         }
     }
 }
@@ -50,17 +82,31 @@ function moveDirection(dir) {
         fifteenBoard[rEmpty].splice(cEmpty, 1, fifteenBoard[rNew][cNew]);
         fifteenBoard[rNew].splice(cNew, 1, EMPTY_SPACE);
         fifteenBoardEmptyPosition = [rNew, cNew];
+
+        updateStatsAfterMove();
+
+        return;
     }
 }
 
 function scramble() {
+    resetBoard();
+    
     const moves = [UP, DOWN, LEFT, RIGHT];
     for (let i = 0; i < 1000; i++) {
         const randomMove = moves[Math.floor(Math.random() * moves.length)];
         moveDirection(randomMove);
     }
+
+    resetStats();
 }
 
+function resetStats() {
+    stats.moves = 0;
+    stats.timerStart = false;
+    stats.tickStart = null;
+    stats.tickEnd = null;
+}
 
 function resetBoard() {
     for (let i = 0; i < gridSize; i++) {
@@ -69,16 +115,32 @@ function resetBoard() {
         console.log([...defaultState[i]])
     }
     fifteenBoardEmptyPosition = [3, 3];
+
+    resetStats();
 }
+
+scramble();
 
 const app = new Vue({
     el: "#app",
     data: {
         fifteenBoard,
-        EMPTY_SPACE
+        EMPTY_SPACE,
+        stats,
+        lastTick: Date.now()
+    },
+    computed: {
+        time() {
+            if (this.stats.tickStart == null) {
+                return 0;
+            }
+            if (this.stats.tickEnd != null) {
+                return (this.stats.tickEnd - this.stats.tickStart) / 1000;
+            }
+            return (this.lastTick - this.stats.tickStart) / 1000;
+        }
     },
     methods: {
-        resetBoard,
         scramble,
         moveTile
     },
@@ -99,5 +161,9 @@ const app = new Vue({
                     break;
             }
         })
+
+        setInterval(() => {
+            this.lastTick = Date.now()
+        }, 25);
     }
  });
