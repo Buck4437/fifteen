@@ -1,0 +1,4 @@
+Stylise the page
+Add arrow key support for moving tiles
+Add a timer
+Add scrambling

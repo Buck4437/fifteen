@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./stylesheets/styles.css">
+        <title>Fifteen!</title>
+    </head>
+    <body>
+        <div id="app">
+            <table class="grid">
+                <tr v-for="(row, r) in fifteenBoard">
+                    <template v-for="(cell, c) in row">
+                        <td v-if="cell != EMPTY_SPACE" class="tile" @click="moveTile(r, c)">
+                            {{cell}}
+                        </td>
+                        <td v-else class="tile-empty"></td>
+                    </template>
+                </tr>
+            </table>
+            <button @click="resetBoard">
+                Reset
+            </button>
+            
+            <button @click="scramble">
+                Scramble
+            </button>
+        </div>
+    </body>
+    <script src="./javascript/libraries/vue.js"></script>
+
+    <script src="./javascript/index.js"></script>
+</html>
+

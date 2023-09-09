@@ -1,0 +1,27 @@
+:root {
+    --color-grid-border: #27345b;
+    --color-grid: #51669f;
+    --color-tile: #1f1e33;
+}
+
+html {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 100%;
+}
+
+.grid {
+    border: 2px solid var(--color-grid-border);
+    background-color: var(--color-grid);
+}
+
+.tile, .tile-empty {
+    width: 100px;
+    height: 100px;
+}
+
+.tile {
+    background-color: var(--color-tile);
+    color: white;
+    text-align: center;
+    font-size: 1.5rem;
+}
