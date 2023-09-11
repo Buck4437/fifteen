@@ -14,6 +14,7 @@ var fifteenBoard = defaultState.map(x => [...x]);
 var fifteenBoardEmptyPosition = [3, 3];
 const stats = {
     moves: 0,
+    hasWon: false,
     tickStart: null,
     tickEnd: null
 };
@@ -27,41 +28,60 @@ function checkWin() {
     const b = fifteenBoard.flat();
     if (a.every((val, idx) => val === b[idx])) {
         stats.tickEnd = Date.now();
+        stats.hasWon = true;
     }
 }
 
-function updateStatsAfterMove() {
+function updateStatsAfterMove(moveCount = 1) {
     if (stats.tickStart == null && stats.tickEnd == null) {
         stats.tickStart = Date.now();
     }
 
     if (stats.tickEnd == null) {
-        stats.moves++;
+        stats.moves += moveCount;
     }
 
     checkWin();
 };
 
 function moveTile(r, c) {
+    if (r < 0 || r >= gridSize || c < 0 || c >= gridSize) {
+        return;
+    }
+
     let [rEmpty, cEmpty] = fifteenBoardEmptyPosition;
 
-    const neighbours = [[0, -1], [0, 1], [1, 0], [-1, 0]];
-
-    for (const neighbour of neighbours) {
-        const rNew = r + neighbour[0];
-        const cNew = c + neighbour[1];
-
-        if ((rNew == rEmpty) && (cNew == cEmpty)) {
-            // Vue is an amazing tool
-            fifteenBoard[rNew].splice(cNew, 1, fifteenBoard[r][c]);
-            fifteenBoard[r].splice(c, 1, EMPTY_SPACE);
-            fifteenBoardEmptyPosition = [r, c];
-
-            updateStatsAfterMove();
-
-            return;
-        }
+    // The cell is empty
+    if (rEmpty === r && cEmpty === c) {
+        return;
     }
+
+    // The cell is off the x/y axis
+    if (r !== rEmpty && c !== cEmpty) {
+        return;
+    }
+
+    // We take the vector from empty space to the tile selected.
+    const dir = [r - rEmpty, c - cEmpty].map(x => Math.sign(x));
+    
+    // Starting from empty space, we set the value of cur cell to next cell until we reach the end.
+    // For example, if we move tile 0,0 and 0,3 is empty, then we set 0,3 to 0,2
+    // followed by 0,2 to 0,1; then 0,1 to 0,0; and we finally set 0,0 to empty.
+    
+    let cur = [rEmpty, cEmpty];
+    let moveCount = 0;
+
+    while (cur[0] !== r || cur[1] !== c) {
+        const next = [cur[0] + dir[0], cur[1] + dir[1]]
+        const nextCell = fifteenBoard[next[0]][next[1]];
+        fifteenBoard[cur[0]].splice(cur[1], 1, nextCell);
+        cur = next;
+        moveCount++;
+    }
+
+    fifteenBoard[r].splice(c, 1, EMPTY_SPACE);
+    fifteenBoardEmptyPosition = [r, c];
+    updateStatsAfterMove(moveCount);
 }
 
 function moveDirection(dir) {
@@ -106,6 +126,7 @@ function resetStats() {
     stats.timerStart = false;
     stats.tickStart = null;
     stats.tickEnd = null;
+    stats.hasWon = false;
 }
 
 function resetBoard() {

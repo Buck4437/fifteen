@@ -9,8 +9,8 @@
     <body>
         <div id="app">
             Moves: {{stats.moves}}<br>
-            Time: {{time}}<br>
-            <table class="grid">
+            Time: {{time}}s<br>
+            <table class="grid" :class="{'win': stats.hasWon}">
                 <tr v-for="(row, r) in fifteenBoard">
                     <template v-for="(cell, c) in row">
                         <td v-if="cell != EMPTY_SPACE" class="tile" @click="moveTile(r, c)">

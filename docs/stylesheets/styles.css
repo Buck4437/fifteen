@@ -1,5 +1,5 @@
 :root {
-    --color-grid-border: #27345b;
+    --color-grid-win: #ffea00;
     --color-grid: #51669f;
     --color-tile: #1f1e33;
 }
@@ -12,6 +12,11 @@ html {
 .grid {
     border: 2px solid var(--color-grid-border);
     background-color: var(--color-grid);
+    padding: 8px;
+}
+
+.grid.win {
+    background-color: var(--color-grid-win);
 }
 
 .tile, .tile-empty {
@@ -24,4 +29,8 @@ html {
     color: white;
     text-align: center;
     font-size: 1.5rem;
+}
+
+.tile:hover {
+    cursor: pointer;
 }

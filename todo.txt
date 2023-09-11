@@ -1,4 +1,1 @@
 Stylise the page
-Add a timer
-Add win condition
-Add win counter
