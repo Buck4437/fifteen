@@ -19,14 +19,18 @@ const stats = {
     tickEnd: null
 };
 
+function isSolved(board) {
+    const a = defaultState.flat();
+    const b = board.flat();
+    return a.every((val, idx) => val === b[idx]);
+}
+
 function checkWin() {
     if (stats.tickEnd !== null) {
         return;
     }
-    
-    const a = defaultState.flat();
-    const b = fifteenBoard.flat();
-    if (a.every((val, idx) => val === b[idx])) {
+
+    if (isSolved(fifteenBoard)) {
         stats.tickEnd = Date.now();
         stats.hasWon = true;
     }
@@ -92,7 +96,7 @@ function moveDirection(dir) {
         [LEFT]: [0, 1],
         [RIGHT]: [0, -1]
     }
-    
+
     let [rEmpty, cEmpty] = fifteenBoardEmptyPosition;
     const rNew = rEmpty + vectors[dir][0];
     const cNew = cEmpty + vectors[dir][1];
@@ -140,7 +144,7 @@ function resetBoard() {
     resetStats();
 }
 
-scramble();
+// scramble();
 
 const app = new Vue({
     el: "#app",
