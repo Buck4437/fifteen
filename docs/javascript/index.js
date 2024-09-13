@@ -144,7 +144,7 @@ function resetBoard() {
     resetStats();
 }
 
-// scramble();
+scramble();
 
 const app = new Vue({
     el: "#app",
